@@ -6,18 +6,21 @@
 //
 
 import SwiftUI
+import AudioToolbox
 
 struct ContentView: View {
     @State private var timeRemainingPlank : Double = 120
     @State private var timeRemainingGB : Double = 120
-    @State private var goalPlank : Double = 0
-    @State private var goalGB : Double = 0
+    @State private var goalPlank : Double = 100
+    @State private var goalGB : Double = 100
     @State private var isTimerRunningPlank = false
     @State private var isTimerRunningGB = false
     @State private var prikaz1 = false
     @State private var prikaz2 = false
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer1 = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     
     private let numberFormatter: NumberFormatter = {
         let numberFormatter = NumberFormatter()
@@ -28,6 +31,18 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing:10){
             //unos tablice treninga
+            Text("PLANK Goal(in seconds) : ")
+                .font(.title2)
+                .padding()
+            TextField("    ", value: $goalPlank, formatter: numberFormatter)
+                    .fixedSize()
+                    .keyboardType(.decimalPad)
+            Text("GLUTE BRIDGE Goal(in seconds) : ")
+                .font(.title2)
+                .padding()
+            TextField("    ", value: $goalGB, formatter: numberFormatter)
+                    .fixedSize()
+                    .keyboardType(.decimalPad)
             Button("Go hard and good luck"){
                 prikaz1.toggle()
             }.sheet(isPresented: $prikaz1)
@@ -40,12 +55,7 @@ struct ContentView: View {
                         }
             
                         
-                            Text("Goal(in seconds) : ")
-                                .font(.title2)
-                                .padding()
-                        TextField("    ", value: $goalPlank, formatter: numberFormatter)
-                                    .fixedSize()
-                                    .keyboardType(.decimalPad)
+                            
                             Text("Total time: \(String(format: "%.0f", goalPlank)) sec")
                                 .font(.title2)
                                 .padding().bold()
@@ -76,11 +86,16 @@ struct ContentView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
                             }}
-                        .onReceive(timer) { _ in
+                        .onReceive(timer1) { _ in
                             if isTimerRunningPlank && timeRemainingPlank > 0 {
                                 timeRemainingPlank = timeRemainingPlank - 1
                                 goalPlank = goalPlank - 1
                             }
+                            if goalPlank==0{
+                                self.timer1.upstream.connect().cancel()
+                                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)){}
+                            }
+                            
                         
                         Button("Done"){
                             prikaz1.toggle()
@@ -91,12 +106,7 @@ struct ContentView: View {
                     Form{
                         Section("Glute Bridge")
                         {
-                            Text("Goal(in seconds) : ")
-                                .font(.title2)
-                                .padding()
-                        TextField("    ", value: $goalGB, formatter: numberFormatter)
-                                    .fixedSize()
-                                    .keyboardType(.decimalPad)
+                            
                             Text("Total time: \(String(format: "%.0f", goalGB)) sec")
                                 .font(.title2)
                                 .padding().bold()
@@ -127,12 +137,15 @@ struct ContentView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
                             }}
-                        .onReceive(timer) { _ in
+                        .onReceive(timer2) { _ in
                             if isTimerRunningGB && timeRemainingGB > 0 {
                                 timeRemainingGB = timeRemainingGB - 1
                                 goalGB = goalGB - 1
                             }
-                        
+                            if goalGB==0{
+                                self.timer2.upstream.connect().cancel()
+                                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)){}
+                            }
                        
                             
                         }
