@@ -77,9 +77,6 @@ struct ContentView: View {
                 Form{
                     Section("Plank")
                     {
-                        Button("Glute Bridge"){
-                            prikaz2.toggle()
-                        }
                         Text("Total time: \(String(format: "%.0f", goalPlank)) sec")
                             .font(.title2)
                             .padding().bold()
@@ -107,12 +104,15 @@ struct ContentView: View {
                         Button(action: {isTimerRunningPlank.toggle()})
                         {
                             Text(isTimerRunningPlank ? "Pause" : "Start")
-                                .font(.title)
+                                .font(.title2)
                                 .padding()
                                 .background(Color.red)
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
-                        }}
+                        }
+                        Button("Glute Bridge"){prikaz2.toggle()}
+                            .padding(.horizontal, 100.0)
+                    }
                     .onReceive(timer1) { _ in
                         if isTimerRunningPlank && timeRemainingPlank > 0 {
                             timeRemainingPlank = timeRemainingPlank - 1
@@ -126,9 +126,6 @@ struct ContentView: View {
                     Form{
                         Section("Glute Bridge")
                         {
-                            Button("Squats"){
-                                prikaz3.toggle()
-                            }
                             Text("Total time: \(String(format: "%.0f", goalGB)) sec")
                                 .font(.title2)
                                 .padding().bold()
@@ -156,12 +153,15 @@ struct ContentView: View {
                             Button(action: {isTimerRunningGB.toggle()})
                             {
                                 Text(isTimerRunningGB ? "Pause" : "Start")
-                                    .font(.title)
+                                    .font(.title2)
                                     .padding()
                                     .background(Color.red)
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
-                            }}
+                            }
+                            Button("Squats"){prikaz2.toggle()}
+                                .padding(.horizontal, 130.0)
+                        }
                         .onReceive(timer2) { _ in
                             if isTimerRunningGB && timeRemainingGB > 0 {
                                 timeRemainingGB = timeRemainingGB - 1
